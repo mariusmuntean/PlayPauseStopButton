@@ -18,9 +18,9 @@ namespace PlayPauseStop
             InitializeComponent();
         }
 
-        private void Slider_OnValueChanged(object sender, ValueChangedEventArgs e)
+        private void Button_OnClicked(object sender, EventArgs e)
         {
-            PlayPauseStopButton.InterpolationValue = (float) e.NewValue;
+            throw new NotImplementedException();
         }
     }
 }

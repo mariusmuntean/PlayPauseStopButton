@@ -10,7 +10,8 @@
     x:Class="PlayPauseStop.MainPage">
     <Grid BackgroundColor="#323232">
         <!-- Place new controls here -->
-        <playPauseStopButton:PlayPauseStopButton x:Name="PlayPauseStopButton" WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="Center" />
-        <Slider Minimum="0" Maximum="1" VerticalOptions="End" HorizontalOptions="Center" WidthRequest="200" ValueChanged="Slider_OnValueChanged" ></Slider>
+        <playPauseStopButton:PlayPauseStopButton x:Name="PlayPauseStopButton" WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="Center"
+                                                 BackgroundHighlightColor="Goldenrod"
+                                                 SymbolColor="Fuchsia" />
     </Grid>
 </ContentPage>

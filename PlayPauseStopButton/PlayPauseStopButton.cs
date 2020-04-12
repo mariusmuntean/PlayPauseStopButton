@@ -7,17 +7,17 @@ using Xamarin.Forms;
 
 namespace PlayPauseStopButton
 {
-    public class PlayPauseStopButton : SKCanvasView
+    public partial class PlayPauseStopButton : SKCanvasView
     {
         private const string MainAnimationName = "MainAnimation";
 
-        SKPaint fillPaint = new SKPaint
+        private SKPaint _symbolPaint = new SKPaint
         {
             Style = SKPaintStyle.Fill,
             Color = SKColors.White
         };
 
-        SKPaint backgroundPaint = new SKPaint
+        SKPaint _backgroundPaint = new SKPaint
         {
             Style = SKPaintStyle.Fill,
             Color = SKColors.White
@@ -46,25 +46,14 @@ namespace PlayPauseStopButton
 
         public PlayPauseStopButton()
         {
-            InterpolationValue = 0.0f;
-            Mode = DisplayMode.PlayStop;
-            CurrentState = State.Stopped;
+            _currentMode = DisplayMode.PlayPause;
+            _currentState = State.Paused;
 
             this.EnableTouchEvents = true;
         }
 
-        public DisplayMode Mode { get; set; }
-        public State CurrentState { get; set; }
-
-        public float InterpolationValue
-        {
-            get => _interpolationValue;
-            set
-            {
-                _interpolationValue = value;
-                this.InvalidateSurface();
-            }
-        }
+        private DisplayMode _currentMode { get; set; }
+        private State _currentState { get; set; }
 
         protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
         {
@@ -73,18 +62,26 @@ namespace PlayPauseStopButton
             var canvas = surface.Canvas;
             canvas.Clear();
 
-            // Compute the symbol area - the paths will be drawn inside this shape
-            // ToDo: don't use info.Rect - instead use a computed square to maintain aspect ratio
-            var symbolRect = new SKRect(
-                info.Rect.MidX - (info.Rect.Width * 0.5f * 0.5f),
-                info.Rect.MidY - (info.Rect.Height * 0.5f * 0.5f),
-                info.Rect.MidX + (info.Rect.Width * 0.5f * 0.5f),
-                info.Rect.MidY + (info.Rect.Height * 0.5f * 0.5f)
+            // Compute a square that will always fit inside the available area
+            var smallerDimension = Math.Min(info.Rect.Width, info.Rect.Height);
+            var aspectRatioRect = new SKRect(
+                info.Rect.MidX - (smallerDimension * 0.5f * 0.5f),
+                info.Rect.MidY - (smallerDimension * 0.5f * 0.5f),
+                info.Rect.MidX + (smallerDimension * 0.5f * 0.5f),
+                info.Rect.MidY + (smallerDimension * 0.5f * 0.5f)
             );
 
             // Draw background
-            backgroundPaint.Color = backgroundPaint.Color.WithAlpha((byte) (_backgroundOpacity * 255));
-            canvas.DrawCircle(info.Rect.MidX, info.Rect.MidY, 0.5f * info.Rect.Width, backgroundPaint);
+            _backgroundPaint.Color = _backgroundPaint.Color.WithAlpha((byte) (_backgroundOpacity * 255));
+            canvas.DrawCircle(aspectRatioRect.MidX, aspectRatioRect.MidY, 0.5f * aspectRatioRect.Width, _backgroundPaint);
+
+            // Compute the symbol area - the paths will be drawn inside this shape
+            var symbolRect = new SKRect(
+                aspectRatioRect.MidX - (aspectRatioRect.Width * 0.5f * 0.5f),
+                aspectRatioRect.MidY - (aspectRatioRect.Height * 0.5f * 0.5f),
+                aspectRatioRect.MidX + (aspectRatioRect.Width * 0.5f * 0.5f),
+                aspectRatioRect.MidY + (aspectRatioRect.Height * 0.5f * 0.5f)
+            );
 
             // ToDo: maybe cache the values and recompute only when needed
             RecomputeSymbolPaths(symbolRect);
@@ -100,8 +97,8 @@ namespace PlayPauseStopButton
             var interpolationB = new SKPathInterpolation(_startSymbolPathB, _endSymbolPathB);
 
             // Draw the interpolated paths
-            canvas.DrawPath(interpolationA.Interpolate(_interpolationValue), fillPaint);
-            canvas.DrawPath(interpolationB.Interpolate(_interpolationValue), fillPaint);
+            canvas.DrawPath(interpolationA.Interpolate(_interpolationValue), _symbolPaint);
+            canvas.DrawPath(interpolationB.Interpolate(_interpolationValue), _symbolPaint);
         }
 
         protected override void OnTouch(SKTouchEventArgs e)
@@ -149,9 +146,11 @@ namespace PlayPauseStopButton
 
         private void OnTap()
         {
+            var previousState = _currentState;
+
             // Switch state and start/end symbol paths
-            (CurrentState, _startSymbolPathA, _startSymbolPathB, _endSymbolPathA, _endSymbolPathB)
-                = (Mode, CurrentState) switch
+            (_currentState, _startSymbolPathA, _startSymbolPathB, _endSymbolPathA, _endSymbolPathB)
+                = (Mode: _currentMode, CurrentState: _currentState) switch
                 {
                     (DisplayMode.PlayPause, State.Paused) => (State.Playing, _playA, _playB, _pauseA, _pauseB),
                     (DisplayMode.PlayPause, State.Stopped) => (State.Playing, _playA, _playB, _pauseA, _pauseB),
@@ -165,8 +164,10 @@ namespace PlayPauseStopButton
             LaunchAnimation();
 
             // Invoke click handler
+            Clicked?.Invoke(this, new PlayPauseStopButtonEventArgs(_currentMode, previousState, _currentState));
 
             // Execute Command
+            Command?.Execute(null);
         }
 
         private void LaunchAnimation()
