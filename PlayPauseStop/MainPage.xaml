@@ -8,7 +8,7 @@
     xmlns:playPauseStopButton="clr-namespace:PlayPauseStopButton;assembly=PlayPauseStopButton"
     mc:Ignorable="d"
     x:Class="PlayPauseStop.MainPage">
-    <Grid>
+    <Grid BackgroundColor="#323232">
         <!-- Place new controls here -->
         <playPauseStopButton:PlayPauseStopButton x:Name="PlayPauseStopButton" WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="Center" />
         <Slider Minimum="0" Maximum="1" VerticalOptions="End" HorizontalOptions="Center" WidthRequest="200" ValueChanged="Slider_OnValueChanged" ></Slider>
