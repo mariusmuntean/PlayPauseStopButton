@@ -47,8 +47,8 @@ namespace PlayPauseStopButton
         public PlayPauseStopButton()
         {
             InterpolationValue = 0.0f;
-            Mode = DisplayMode.PlayPause;
-            CurrentState = State.Paused;
+            Mode = DisplayMode.PlayStop;
+            CurrentState = State.Stopped;
 
             this.EnableTouchEvents = true;
         }
@@ -222,7 +222,7 @@ namespace PlayPauseStopButton
 
             _playB.Close();
 
-            // pause a
+            // pause a - a rectangle; full height and a third of the width
             _pauseA = new SKPath();
 
             _pauseA.MoveTo(symbolRect.Left, symbolRect.Top);
@@ -231,13 +231,29 @@ namespace PlayPauseStopButton
             _pauseA.LineTo(symbolRect.Left, symbolRect.Bottom);
             _pauseA.Close();
 
-            // pause b
+            // pause b - another rectangle; full height and the last third of the width
             _pauseB = new SKPath();
             _pauseB.MoveTo(symbolRect.Left + 0.66f * symbolRect.Width, symbolRect.Top);
             _pauseB.LineTo(symbolRect.Right, symbolRect.Top);
             _pauseB.LineTo(symbolRect.Right, symbolRect.Bottom);
             _pauseB.LineTo(symbolRect.Left + 0.66f * symbolRect.Width, symbolRect.Bottom);
             _pauseB.Close();
+
+            // stop a - half of a square
+            _stopA = new SKPath();
+            _stopA.MoveTo(symbolRect.MidX - symbolRect.Width * 0.25f, symbolRect.MidY - symbolRect.Height * 0.25f);
+            _stopA.LineTo(symbolRect.MidX, symbolRect.MidY - symbolRect.Height * 0.25f);
+            _stopA.LineTo(symbolRect.MidX, symbolRect.MidY + symbolRect.Height * 0.25f);
+            _stopA.LineTo(symbolRect.MidX - symbolRect.Width * 0.25f, symbolRect.MidY + symbolRect.Height * 0.25f);
+            _stopA.Close();
+
+            // stop a - second of a square
+            _stopB = new SKPath();
+            _stopB.MoveTo(symbolRect.MidX, symbolRect.MidY - symbolRect.Height * 0.25f);
+            _stopB.LineTo(symbolRect.MidX, symbolRect.MidY + symbolRect.Height * 0.25f);
+            _stopB.LineTo(symbolRect.MidX + symbolRect.Width * 0.25f, symbolRect.MidY + symbolRect.Height * 0.25f);
+            _stopB.LineTo(symbolRect.MidX + symbolRect.Width * 0.25f, symbolRect.MidY - symbolRect.Height * 0.25f);
+            _stopB.Close();
         }
     }
 }
