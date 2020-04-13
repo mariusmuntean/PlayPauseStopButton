@@ -27,27 +27,17 @@ namespace PlayPauseStopButton
                 InvalidateSurface();
             }
 
-            if (propertyName == CurrentModeProperty.PropertyName)
-            {
-                _currentMode = CurrentMode;
-            }
-
-            if (propertyName == CurrentStateProperty.PropertyName)
-            {
-                _currentState = CurrentState;
-            }
-
             // Do the animation just once
             if (propertyName == CurrentModeProperty.PropertyName || propertyName == CurrentStateProperty.PropertyName)
             {
                 (_endSymbolPathA, _endSymbolPathB) = (CurrentMode, CurrentState) switch
                 {
-                    (DisplayMode.PlayPause, State.Paused) => (_pauseA, _pauseB),
-                    (DisplayMode.PlayPause, State.Stopped) => (_stopA, _stopB),
-                    (DisplayMode.PlayPause, State.Playing) => (_playA, _playB),
-                    (DisplayMode.PlayStop, State.Paused) => (_pauseA, _pauseB),
-                    (DisplayMode.PlayStop, State.Stopped) => (_stopA, _stopB),
-                    (DisplayMode.PlayStop, State.Playing) => (_playA, _playB)
+                    (DisplayMode.PlayPause, State.Paused) => (_playA, _playB),
+                    (DisplayMode.PlayPause, State.Stopped) => (_playA, _playB),
+                    (DisplayMode.PlayPause, State.Playing) => (_pauseA, _pauseB),
+                    (DisplayMode.PlayStop, State.Paused) => (_playA, _playB),
+                    (DisplayMode.PlayStop, State.Stopped) => (_playA, _playB),
+                    (DisplayMode.PlayStop, State.Playing) => (_stopA, _stopB)
                 };
 
                 LaunchAnimation();

@@ -7,11 +7,170 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:playPauseStopButton="clr-namespace:PlayPauseStopButton;assembly=PlayPauseStopButton"
     mc:Ignorable="d"
-    x:Class="PlayPauseStop.MainPage">
-    <Grid BackgroundColor="#323232">
-        <!-- Place new controls here -->
-        <playPauseStopButton:PlayPauseStopButton x:Name="PlayPauseStopButton" WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="Center"
-                                                 BackgroundHighlightColor="Goldenrod"
-                                                 SymbolColor="Fuchsia" />
+    x:Class="PlayPauseStop.MainPage"
+    BackgroundColor="#323232">
+
+    <ContentPage.Resources>
+        <Style
+            TargetType="Label">
+            <Setter
+                Property="TextColor"
+                Value="LightGray" />
+            <Setter
+                Property="VerticalOptions"
+                Value="Center" />
+            <Setter
+                Property="HorizontalOptions"
+                Value="End" />
+        </Style>
+    </ContentPage.Resources>
+    <Grid
+        Margin="0,30">
+
+        <Grid.RowDefinitions>
+            <RowDefinition
+                Height="Auto" />
+            <RowDefinition
+                Height="*" />
+            <RowDefinition
+                Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Frame
+            Grid.Row="0"
+            BackgroundColor="#434343"
+            IsClippedToBounds="True"
+            CornerRadius="8"
+            Margin="10"
+            Padding="10">
+            <Grid
+                Margin="0"
+                ColumnSpacing="3">
+                <Grid.RowDefinitions>
+                    <RowDefinition
+                        Height="Auto" />
+                    <RowDefinition
+                        Height="Auto" />
+                    <RowDefinition
+                        Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition
+                        Width="Auto" />
+                    <ColumnDefinition
+                        Width="*" />
+                    <ColumnDefinition
+                        Width="Auto" />
+                    <ColumnDefinition
+                        Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Text="Behaviour"
+                    FontAttributes="Bold"
+                    FontSize="Large"></Label>
+                <Label
+                    Grid.Row="0"
+                    Grid.Column="2"
+                    Grid.ColumnSpan="2"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Text="Colors"
+                    FontAttributes="Bold"
+                    FontSize="Large"></Label>
+
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Text="Mode"
+                    HorizontalOptions="End" />
+                <Picker
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    x:Name="ModePicker"
+                    TextColor="White"
+                    BackgroundColor="Transparent"
+                    SelectedItem="{Binding Source={x:Reference PlayPauseStopBtn}, Path=CurrentMode, Mode=TwoWay}">
+                    <Picker.ItemsSource>
+                        <x:Array
+                            Type="{x:Type playPauseStopButton:DisplayMode}">
+                            <playPauseStopButton:DisplayMode>PlayPause</playPauseStopButton:DisplayMode>
+                            <playPauseStopButton:DisplayMode>PlayStop</playPauseStopButton:DisplayMode>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="0"
+                    Text="State"
+                    HorizontalOptions="End" />
+                <Picker
+                    Grid.Row="2"
+                    Grid.Column="1"
+                    x:Name="StatePicker"
+                    TextColor="White"
+                    BackgroundColor="Transparent"
+                    SelectedItem="{Binding Source={x:Reference PlayPauseStopBtn}, Path=CurrentState, Mode=TwoWay}">
+                    <Picker.ItemsSource>
+                        <x:Array
+                            Type="{x:Type playPauseStopButton:State}">
+                            <playPauseStopButton:State>Playing</playPauseStopButton:State>
+                            <playPauseStopButton:State>Paused</playPauseStopButton:State>
+                            <playPauseStopButton:State>Stopped</playPauseStopButton:State>
+                        </x:Array>
+                    </Picker.ItemsSource>
+                </Picker>
+
+                <Label
+                    Grid.Row="1"
+                    Grid.Column="2"
+                    Text="Symbol" />
+                <Entry
+                    Grid.Row="1"
+                    Grid.Column="3"
+                    BackgroundColor="#434343"
+                    x:Name="SymbolColorTxt"></Entry>
+
+
+                <Label
+                    Grid.Row="2"
+                    Grid.Column="2"
+                    Text="Highlight" />
+                <Entry
+                    Grid.Row="2"
+                    Grid.Column="3"
+                    BackgroundColor="#434343"
+                    x:Name="HighlightColorTxt"></Entry>
+
+            </Grid>
+        </Frame>
+
+        <playPauseStopButton:PlayPauseStopButton
+            x:Name="PlayPauseStopBtn"
+            Grid.Row="1"
+            Margin="50"
+            HorizontalOptions="Center"
+            VerticalOptions="Center" />
+
+        <StackLayout
+            Grid.Row="2"
+            Orientation="Horizontal"
+            HorizontalOptions="Center"
+            VerticalOptions="Center">
+
+            <Label
+                Text="YouTube Background"></Label>
+            <Switch
+                x:Name="YTSwitch"
+                OnColor="#c4302b"></Switch>
+        </StackLayout>
+
     </Grid>
+
 </ContentPage>

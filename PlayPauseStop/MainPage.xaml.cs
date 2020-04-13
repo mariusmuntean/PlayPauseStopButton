@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace PlayPauseStop
@@ -16,6 +12,70 @@ namespace PlayPauseStop
         public MainPage()
         {
             InitializeComponent();
+
+            SymbolColorTxt.TextChanged += SymbolColorTextChanged;
+            HighlightColorTxt.TextChanged += BackgroundHighlightColorTextChanged;
+            PlayPauseStopBtn.PropertyChanged += OnPPSBtnPropertyChanged;
+            YTSwitch.Toggled += YTToggled;
+            RefreshUI();
+
+            ModePicker.SelectedItem = PlayPauseStopBtn.CurrentMode;
+            StatePicker.SelectedItem = PlayPauseStopBtn.CurrentState;
+        }
+
+        private void YTToggled(object sender, ToggledEventArgs e)
+        {
+            PlayPauseStopBtn.BackgroundColor = YTSwitch.IsToggled ? Color.FromHex("#c4302b") : Color.Transparent;
+        }
+
+        private void SymbolColorTextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                if (SymbolColorTxt.Text.Length != 9)
+                {
+                    return;
+                }
+
+                var newSymbolColor = Color.FromHex(SymbolColorTxt.Text);
+                PlayPauseStopBtn.SymbolColor = newSymbolColor;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+        private void BackgroundHighlightColorTextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                if (HighlightColorTxt.Text.Length != 9)
+                {
+                    return;
+                }
+
+                var newBackgroundHighlightColor = Color.FromHex(HighlightColorTxt.Text);
+                PlayPauseStopBtn.BackgroundHighlightColor = newBackgroundHighlightColor;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+        }
+
+        private void RefreshUI()
+        {
+            SymbolColorTxt.Text = PlayPauseStopBtn.SymbolColor.ToHex();
+            SymbolColorTxt.TextColor = PlayPauseStopBtn.SymbolColor;
+
+            HighlightColorTxt.Text = PlayPauseStopBtn.BackgroundHighlightColor.ToHex();
+            HighlightColorTxt.TextColor = PlayPauseStopBtn.BackgroundHighlightColor;
+        }
+
+        private void OnPPSBtnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            RefreshUI();
         }
 
         private void Button_OnClicked(object sender, EventArgs e)

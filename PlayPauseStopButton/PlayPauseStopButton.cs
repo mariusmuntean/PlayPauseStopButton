@@ -46,17 +46,29 @@ namespace PlayPauseStopButton
 
         public PlayPauseStopButton()
         {
-            _currentMode = DisplayMode.PlayPause;
-            _currentState = State.Paused;
+            CurrentMode = DisplayMode.PlayPause;
+            CurrentState = State.Paused;
+
+            _interpolationValue = 1.0f;
 
             this.EnableTouchEvents = true;
         }
 
-        private DisplayMode _currentMode { get; set; }
-        private State _currentState { get; set; }
+        protected override SizeRequest OnMeasure(double widthConstraint, double heightConstraint)
+        {
+            var w = double.IsInfinity(widthConstraint) ? double.MaxValue : widthConstraint;
+            var h = double.IsInfinity(heightConstraint) ? double.MaxValue : heightConstraint;
+
+            var smallerDimension = Math.Min(w, h);
+
+            return new SizeRequest(new Size(smallerDimension, smallerDimension));
+        }
 
         protected override void OnPaintSurface(SKPaintSurfaceEventArgs e)
         {
+            // The docs mention this
+            base.OnPaintSurface(e);
+
             var info = e.Info;
             var surface = e.Surface;
             var canvas = surface.Canvas;
@@ -65,10 +77,10 @@ namespace PlayPauseStopButton
             // Compute a square that will always fit inside the available area
             var smallerDimension = Math.Min(info.Rect.Width, info.Rect.Height);
             var aspectRatioRect = new SKRect(
-                info.Rect.MidX - (smallerDimension * 0.5f * 0.5f),
-                info.Rect.MidY - (smallerDimension * 0.5f * 0.5f),
-                info.Rect.MidX + (smallerDimension * 0.5f * 0.5f),
-                info.Rect.MidY + (smallerDimension * 0.5f * 0.5f)
+                info.Rect.MidX - (smallerDimension * 0.5f),
+                info.Rect.MidY - (smallerDimension * 0.5f),
+                info.Rect.MidX + (smallerDimension * 0.5f),
+                info.Rect.MidY + (smallerDimension * 0.5f)
             );
 
             // Draw background
@@ -85,6 +97,7 @@ namespace PlayPauseStopButton
 
             // ToDo: maybe cache the values and recompute only when needed
             RecomputeSymbolPaths(symbolRect);
+            ReAssignStartEndPaths();
 
             // Insurance - in case the start/stop symbol paths are not set then fall back to something
             _startSymbolPathA = _startSymbolPathA ?? _playA;
@@ -99,6 +112,9 @@ namespace PlayPauseStopButton
             // Draw the interpolated paths
             canvas.DrawPath(interpolationA.Interpolate(_interpolationValue), _symbolPaint);
             canvas.DrawPath(interpolationB.Interpolate(_interpolationValue), _symbolPaint);
+
+            // The docs mention this
+            canvas.Flush();
         }
 
         protected override void OnTouch(SKTouchEventArgs e)
@@ -146,25 +162,24 @@ namespace PlayPauseStopButton
 
         private void OnTap()
         {
-            var previousState = _currentState;
+            var previousState = CurrentState;
 
-            // Switch state and start/end symbol paths
-            (_currentState, _startSymbolPathA, _startSymbolPathB, _endSymbolPathA, _endSymbolPathB)
-                = (Mode: _currentMode, CurrentState: _currentState) switch
-                {
-                    (DisplayMode.PlayPause, State.Paused) => (State.Playing, _playA, _playB, _pauseA, _pauseB),
-                    (DisplayMode.PlayPause, State.Stopped) => (State.Playing, _playA, _playB, _pauseA, _pauseB),
-                    (DisplayMode.PlayPause, State.Playing) => (State.Paused, _pauseA, _pauseB, _playA, _playB),
-                    (DisplayMode.PlayStop, State.Paused) => (State.Playing, _playA, _playB, _stopA, _stopB),
-                    (DisplayMode.PlayStop, State.Stopped) => (State.Playing, _playA, _playB, _stopA, _stopB),
-                    (DisplayMode.PlayStop, State.Playing) => (State.Stopped, _stopA, _stopB, _playA, _playB)
-                };
+            // Switch state
+            CurrentState = (CurrentMode, CurrentState) switch
+            {
+                (DisplayMode.PlayPause, State.Paused) => State.Playing,
+                (DisplayMode.PlayPause, State.Stopped) => State.Playing,
+                (DisplayMode.PlayPause, State.Playing) => State.Paused,
+                (DisplayMode.PlayStop, State.Paused) => State.Playing,
+                (DisplayMode.PlayStop, State.Stopped) => State.Playing,
+                (DisplayMode.PlayStop, State.Playing) => State.Stopped
+            };
 
             // Launch animation
             LaunchAnimation();
 
             // Invoke click handler
-            Clicked?.Invoke(this, new PlayPauseStopButtonEventArgs(_currentMode, previousState, _currentState));
+            Clicked?.Invoke(this, new PlayPauseStopButtonEventArgs(CurrentMode, previousState, CurrentState));
 
             // Execute Command
             Command?.Execute(null);
@@ -255,6 +270,20 @@ namespace PlayPauseStopButton
             _stopB.LineTo(symbolRect.MidX + symbolRect.Width * 0.25f, symbolRect.MidY + symbolRect.Height * 0.25f);
             _stopB.LineTo(symbolRect.MidX + symbolRect.Width * 0.25f, symbolRect.MidY - symbolRect.Height * 0.25f);
             _stopB.Close();
+        }
+
+        private void ReAssignStartEndPaths()
+        {
+            (_startSymbolPathA, _startSymbolPathB, _endSymbolPathA, _endSymbolPathB)
+                = (CurrentMode, CurrentState) switch
+                {
+                    (DisplayMode.PlayPause, State.Paused) => (_pauseA, _pauseB, _playA, _playB),
+                    (DisplayMode.PlayPause, State.Stopped) => (_pauseA, _pauseB, _playA, _playB),
+                    (DisplayMode.PlayPause, State.Playing) => (_playA, _playB, _pauseA, _pauseB),
+                    (DisplayMode.PlayStop, State.Paused) => (_stopA, _stopB, _playA, _playB),
+                    (DisplayMode.PlayStop, State.Stopped) => (_stopA, _stopB, _playA, _playB),
+                    (DisplayMode.PlayStop, State.Playing) => (_playA, _playB, _stopA, _stopB)
+                };
         }
     }
 }
