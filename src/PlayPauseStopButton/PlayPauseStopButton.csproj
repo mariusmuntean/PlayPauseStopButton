@@ -4,19 +4,23 @@
         <TargetFramework>netstandard2.0</TargetFramework>
         <LangVersion>8</LangVersion>
         <PackOnBuild>true</PackOnBuild>
-        <PackageId>de.marius.playpausestopbutton</PackageId>
-        <PackageVersion>1.0</PackageVersion>
+        <PackageId>PlayPauseStopButton</PackageId>
+        <PackageVersion>1.0.1</PackageVersion>
         <Authors>Marius Muntean</Authors>
         <Copyright>2020</Copyright>
         <Owners>Marius Muntean</Owners>
         <Title>PlayPauseStop</Title>
-        <Description>An animated button, in the style of the YouTube Play button.
+        <Description>A Xamarin.Forms animated button, in the style of the YouTube Play button.
 Supports Play/Paused or Play/Stopped modes. When clicked it morphs from one state to the next.
 Allows a bit of customization too.</Description>
-        <RepositoryUrl>https://github.com/mariusmuntean/PlayPauseStopButton</RepositoryUrl>
         <PackageReleaseNotes>First release</PackageReleaseNotes>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageIcon>icon.png</PackageIcon>
+        <PackageIconUrl>https://raw.githubusercontent.com/mariusmuntean/PlayPauseStopButton/master/src/PlayPauseStopButton/icon.png</PackageIconUrl>
+        <PackageTags>xamarin.forms skiasharp animation button morph youtube</PackageTags>
+        <PackageProjectUrl>https://github.com/mariusmuntean/PlayPauseStopButton</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/mariusmuntean/PlayPauseStopButton.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
     </PropertyGroup>
 
     <ItemGroup>
