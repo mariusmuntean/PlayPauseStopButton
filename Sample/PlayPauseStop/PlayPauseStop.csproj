@@ -17,6 +17,5 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\PlayPauseStopButton\PlayPauseStopButton.csproj" />
-    <ProjectReference Include="..\PlayPauseStopButton\PlayPauseStopButton.csproj" />
   </ItemGroup>
 </Project>

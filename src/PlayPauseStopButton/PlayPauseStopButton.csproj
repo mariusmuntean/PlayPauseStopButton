@@ -16,8 +16,18 @@ Allows a bit of customization too.</Description>
         <RepositoryUrl>https://github.com/mariusmuntean/PlayPauseStopButton</RepositoryUrl>
         <PackageReleaseNotes>First release</PackageReleaseNotes>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageIcon>icon.png</PackageIcon>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Include="icon.png">
+          <Pack>true</Pack>
+          <Visible>false</Visible>
+          <PackagePath></PackagePath>
+          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
+    </ItemGroup>
+    
     <ItemGroup>
         <PackageReference Include="SkiaSharp.Extended" Version="1.60.0" />
         <PackageReference Include="SkiaSharp.Views.Forms" Version="1.68.1.1" />
@@ -27,4 +37,5 @@ Allows a bit of customization too.</Description>
           <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
+    
 </Project>
